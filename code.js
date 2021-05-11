@@ -1,8 +1,26 @@
 $(document).ready(function () {
-    $("button").on("click", createStudent);
-    $("button").on("click", sortName);
-    $("button").on("click", sortPercent);
+    $("button#clickScores").on("click", createStudent);
+    $("button#sortName").on("click", sortAndDisplayByName);
+    $("button#sortPercent").on("click", sortAndDisplayByPercent);
 });
+
+function sortAndDisplayByName (event){
+    event.preventDefault();
+    $("#output").empty();
+    newCalculatedForm.sort(sortName);
+    newCalculatedForm.forEach(function(val) {
+        displayContents(val)
+    });
+}
+
+function sortAndDisplayByPercent(event){
+    event.preventDefault();
+    $("#output").empty();
+    newCalculatedForm.sort(sortPercent);
+    newCalculatedForm.forEach(function(val) {
+        displayContents(val)
+    });
+}
 
 let calculatedForm;
 let newCalculatedForm = [];
@@ -12,9 +30,8 @@ function createStudent(event) {
     calculatedForm = {
         firstName: $("#firstName").val(),
         lastName: $("#lastName").val(),
-        pointsEarned: $("#pointsEarned").val(),
-        pointsPossible: $("#pointsPossible").val(),
-        percentage: this.pointsEarned / this.pointsPossible * 100,
+        pointsEarned: parseInt($("#pointsEarned").val()),
+        pointsPossible: parseInt($("#pointsPossible").val()),
 
         getDisplayPercentage: function () {
             let percent = Math.round((100) * (this.pointsEarned / this.pointsPossible));
@@ -22,15 +39,16 @@ function createStudent(event) {
         },
 
         getLetterGrade: function () {
-            if (this.percentage > 89 && this.percentage < 101) {
+            let percentage = this.pointsEarned / this.pointsPossible * 100;
+            if (percentage > 89 && percentage < 101) {
                 return "A";
-            } else if (this.percentage > 79 && this.percentage < 90) {
+            } else if (percentage > 79 && percentage < 90) {
                 return "B";
-            } else if (this.percentage > 69 && this.percentage < 80) {
+            } else if (percentage > 69 && percentage < 80) {
                 return "C";
-            } else if (this.percentage > 59 && this.percentage < 70) {
+            } else if (percentage > 59 && percentage < 70) {
                 return "D";
-            } else if (this.percentage > 49 && this.percentage < 60) {
+            } else if (percentage > 0 && percentage < 60) {
                 return "E";
             }
             else {
@@ -39,6 +57,7 @@ function createStudent(event) {
         }
     }
     newCalculatedForm.push(calculatedForm);
+    $("#output").empty();
     newCalculatedForm.forEach(function(val) {
         displayContents(val)
     });
@@ -76,9 +95,9 @@ function sortName(a, b)
 //create button that sorts the array by percent
 function sortPercent(a, b)
 {
-    if (a.percentage < b.percentage)
+    if (a.getLetterGrade() < b.getLetterGrade())
         return -1;
-    else if (a.percentage > b.percentage)
+    else if (a.getLetterGrade() > b.getLetterGrade())
         return 1;
     else
         return 0;
